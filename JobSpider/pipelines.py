@@ -13,7 +13,7 @@ class JobSpiderPipeline(object):
     def __init__(self):
         super(JobSpiderPipeline, self).__init__()
         # Connect to the database
-        self.connection = pymysql.connect(host='192.168.1.104',
+        self.connection = pymysql.connect(host='192.168.1.107',
                                           user='root',
                                           password='root',
                                           db='jobs',
@@ -23,11 +23,11 @@ class JobSpiderPipeline(object):
         self.file = open('zhaoping.json', 'w')
 
     def process_item(self, item, spider):
-        # print('process_item--->', spider.name)
+        print('process_item--->', spider.name)
         if spider.name == 'lagou':
-            self.method_lagou_item(item)
+            self.save_lagou_item(item)
         elif spider.name == 'zhilian':
-            self.method_zhilian_item(item)
+            self.save_zhilian_item(item)
         else:
             pass
 
@@ -37,21 +37,23 @@ class JobSpiderPipeline(object):
         self.connection.close()
         self.file.close()
 
-    def method_lagou_item(self, item):
+    def save_lagou_item(self, item):
         try:
             with self.connection.cursor() as cursor:
                 sql = "INSERT INTO jobs_lagou (keyWord, businessZones, companyFullName, companySize, createTime," \
-                      "district, education, financeStage, positionName, salary, workYear) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                      "district, education, financeStage, positionName, salary, workYear, companyLogo, positionId) " \
+                      "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
 
                 cursor.execute(sql, (item['keyWord'], item['businessZones'], item['companyFullName'],
                                      item['companySize'], item['createTime'], item['district'], item['education'],
-                                     item['financeStage'], item['positionName'], item['salary'], item['workYear']))
+                                     item['financeStage'], item['positionName'], item['salary'], item['workYear'],
+                                     item['companyLogo'], item['positionId']))
                 self.connection.commit()
             print('insert succeed')
         except Exception:
             print('insert failed')
 
-    def method_zhilian_item(self, item):
+    def save_zhilian_item(self, item):
         json_string = json.dumps(dict(item), ensure_ascii=False)
         self.file.write(json_string.encode('utf-8') + '\n')
 

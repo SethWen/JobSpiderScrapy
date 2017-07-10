@@ -20,6 +20,8 @@ class LagouSpiderItem(scrapy.Item):
     positionName = scrapy.Field()
     salary = scrapy.Field()
     workYear = scrapy.Field()
+    companyLogo = scrapy.Field()
+    positionId = scrapy.Field()
 
     """
            "businessZones": [

@@ -19,7 +19,7 @@ class LagouSpider(scrapy.Spider):
     # 更改该值，改变爬取的页数
     limit = 30
     # 搜索关键字
-    keyWord = 'android'
+    keyWord = 'python'
 
     cookies = {
         # 'JSESSIONID': 'ABAAABAACDBABJB9F1D05C3E3578CEC86F0965AC555A37A',
@@ -82,6 +82,8 @@ class LagouSpider(scrapy.Spider):
             item['positionName'] = self.deal_str(result['positionName'])
             item['salary'] = self.deal_str(result['salary'])
             item['workYear'] = self.deal_str(result['workYear'])
+            item['companyLogo'] = self.deal_str(result['companyLogo'])
+            item['positionId'] = self.deal_str(result['positionId'])
 
             yield item
 
@@ -89,6 +91,7 @@ class LagouSpider(scrapy.Spider):
             self.offset += 1
 
         self.form_data['pn'] = str(self.offset)
+        self.form_data['first'] = 'false'
         yield scrapy.FormRequest(self.url,
                                  headers=settings.DEFAULT_REQUEST_HEADERS,
                                  cookies=self.cookies,
